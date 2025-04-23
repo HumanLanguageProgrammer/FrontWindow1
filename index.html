@@ -5,16 +5,31 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Project: Front Window</title>
   <script>
-    // Generate a fake conversation ID
     const conversationId = 'echo-' + Date.now();
-    function handleSubmit(event) {
+
+    async function handleSubmit(event) {
       event.preventDefault();
       const input = document.getElementById("userInput").value;
       const output = document.getElementById("agentResponse");
       const convo = document.getElementById("conversationId");
       convo.textContent = `Conversation ID: ${conversationId}`;
-      // Simulated reply
-      output.innerHTML = `<strong>Navigator:</strong> Yes, that's absolutely possible!`;
+      output.innerHTML = `⏳ Thinking...`;
+
+      try {
+        const response = await fetch("https://hook.eu2.make.com/pprb9augo9n5fx978u8ookmav492cy58", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ question: input })
+        });
+
+        const data = await response.json();
+        output.innerHTML = `<strong>Navigator:</strong> ${data.reply}`;
+      } catch (error) {
+        output.innerHTML = `⚠️ Error: Unable to get response.`;
+        console.error(error);
+      }
     }
   </script>
   <style>
